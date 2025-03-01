@@ -1,5 +1,6 @@
 const { sequelize } = require("../models");
 const { QueryTypes } = require('sequelize');
+
 class RoomService {
     constructor(db) {
         this.client = db.sequelize;
@@ -7,7 +8,7 @@ class RoomService {
 
     //Get all rooms using raw SQL
     async get() {
-        const rooms = await sequelize.query('SELECT * FROM rooms', {
+        const rooms = await sequelize.query('SELECT * FROM Rooms', {
             type: QueryTypes.SELECT,
         });
         return rooms;
@@ -15,9 +16,8 @@ class RoomService {
 
     //Create a room using raw SQL
     async create(capacity, pricePerDay, hotelId) {
-        sequelize.query('INSERT INTO rooms (Capacity, PricePerDay, HotelId) VALUES (:Capacity, :PricePerDay, :HotelId)', {
-            replacements:
-            {
+        sequelize.query('INSERT INTO Rooms (Capacity, PricePerDay, HotelId) VALUES (:Capacity, :PricePerDay, :HotelId)', {
+            replacements: {
                 Capacity: capacity,
                 PricePerDay: pricePerDay,
                 HotelId: hotelId
@@ -31,9 +31,8 @@ class RoomService {
 
     //Get all rooms for a specific hotel using raw SQL
     async getHotelRooms(hotelId) {
-        const rooms = await sequelize.query('SELECT * FROM rooms WHERE HotelId = :hotelId', {
-            replacements:
-            {
+        const rooms = await sequelize.query('SELECT * FROM Rooms WHERE HotelId = :hotelId', {
+            replacements: {
                 hotelId: hotelId
             },
             type: QueryTypes.SELECT,
@@ -43,9 +42,8 @@ class RoomService {
 
     //Delete a room using raw SQL
     async deleteRoom(roomId) {
-        await sequelize.query('DELETE FROM rooms WHERE id = :roomId', {
-            replacements:
-            {
+        await sequelize.query('DELETE FROM Rooms WHERE id = :roomId', {
+            replacements: {
                 roomId: roomId
             }
         }).then(result => {
@@ -58,8 +56,7 @@ class RoomService {
     //Rent a specified room using raw SQL
     async rentARoom(userId, roomId, startDate, endDate) {
         sequelize.query('CALL insert_reservation(:UserId, :RoomId, :StartDate, :EndDate)', {
-            replacements:
-            {
+            replacements: {
                 RoomId: roomId,
                 UserId: userId,
                 StartDate: startDate,
@@ -72,4 +69,5 @@ class RoomService {
         })
     }
 }
+
 module.exports = RoomService;
